@@ -44,6 +44,7 @@ class Tournament:
         self.initial_elo = 1000  # Score ELO de départ pour tous les joueurs
         self.registered_players = []
         self.description = description
+        
 
     def register_player(self, player):
         # Initialisez le score ELO du joueur pour le tournoi
