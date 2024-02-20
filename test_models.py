@@ -1,55 +1,42 @@
 import unittest
-from models import Player, Tournament
-from datetime import datetime
-import random
+from datetime import date
+from models import Player, ChessTournament, TournamentRound, ChessMatch
 
-# ○ créer quelques joueurs ;
-# ○ créer un tour, ajouter les joueurs ;
-# ○ voir comment les joueurs sont associés (points) ;
-# ○ gagner/perdre des matchs de manière aléatoire ;
-# ○ vérifier que les données des modèles sont correctement mises à
-# jour.
+class TestPlayer(unittest.TestCase):
+    def test_creation_player(self):
+        player = Player(name="Doe", first_name="John", birth_date=date(1990, 1, 1), gender="M", ranking=1200)
+        self.assertEqual(player.name, "Doe")
+        self.assertEqual(player.first_name, "John")
+        self.assertEqual(player.birth_date, date(1990, 1, 1))
+        self.assertEqual(player.gender, "M")
+        self.assertEqual(player.ranking, 1200)
 
-class TestTournamentSimulation(unittest.TestCase):
-    def setUp(self):
-        # Création de quelques joueurs
-        self.player1 = Player("Doe", "John", datetime(1990, 1, 1), "1", 1200)
-        self.player2 = Player("Roe", "Jane", datetime(1985, 2, 2), "2", 1300)
-        self.player3 = Player("Moe", "Joe", datetime(1980, 3, 3), "3", 1100)
-        self.players = [self.player1, self.player2, self.player3]
+class TestChessTournament(unittest.TestCase):
+    def test_creation_tournament(self):
+        tournament = ChessTournament(name="Paris Open", location="Paris", start_date=date(2023, 6, 1), end_date=date(2023, 6, 7), number_of_rounds=4)
+        self.assertEqual(tournament.name, "Paris Open")
+        self.assertEqual(tournament.location, "Paris")
+        self.assertEqual(tournament.start_date, date(2023, 6, 1))
+        self.assertEqual(tournament.end_date, date(2023, 6, 7))
+        self.assertEqual(tournament.number_of_rounds, 4)
 
-        # Création d'un tournoi et ajout des joueurs
-        self.tournament = Tournament("Spring Open", "New York", datetime(2022, 4, 1), datetime(2022, 4, 7))
-        for player in self.players:
-            self.tournament.register_player(player)
+class TestTournamentRound(unittest.TestCase):
+    def test_add_match_to_round(self):
+        round = TournamentRound(name="Round 1")
+        player1 = Player(name="Doe", first_name="John", birth_date=date(1990, 1, 1), gender="M", ranking=1200)
+        player2 = Player(name="Smith", first_name="Jane", birth_date=date(1991, 2, 2), gender="F", ranking=1300)
+        match = ChessMatch(player1=player1, player2=player2)
+        round.add_match(match)
+        self.assertIn(match, round.matches)
+        self.assertEqual(len(round.matches), 1)
 
-    def simulate_match(self, player1, player2):
-        # Simuler un résultat de match aléatoire
-        result = random.choice(["win", "loss", "draw"])
-        print(f"Match entre {player1.name} et {player2.name}: {result.upper()}")
-        if result == "win":
-            player1.update_elo_score(player2.elo_score, "win")
-            player2.update_elo_score(player1.elo_score, "loss")
-        elif result == "loss":
-            player1.update_elo_score(player2.elo_score, "loss")
-            player2.update_elo_score(player1.elo_score, "win")
-        else:  # draw
-            player1.update_elo_score(player2.elo_score, "draw")
-            player2.update_elo_score(player1.elo_score, "draw")
-        print(f"Après le match, le score ELO de {player1.name} est {player1.elo_score}")
-        print(f"Après le match, le score ELO de {player2.name} est {player2.elo_score}\n")
+class TestChessMatch(unittest.TestCase):
+    def test_creation_match(self):
+        player1 = Player(name="Doe", first_name="John", birth_date=date(1990, 1, 1), gender="M", ranking=1200)
+        player2 = Player(name="Smith", first_name="Jane", birth_date=date(1991, 2, 2), gender="F", ranking=1300)
+        match = ChessMatch(player1=player1, player2=player2)
+        self.assertEqual(match.player1, player1)
+        self.assertEqual(match.player2, player2)
 
-    def test_tournament_simulation(self):
-        # Simuler des matchs entre tous les joueurs
-        for i in range(len(self.players)):
-            for j in range(i + 1, len(self.players)):
-                self.simulate_match(self.players[i], self.players[j])
-
-        # Vérifier que les scores ELO ont été mis à jour
-        print("Scores ELO finaux après le tournoi :")
-        for player in self.players:
-            print(f"{player.name}: {player.elo_score}")
-            self.assertNotEqual(player.elo_score, 1200)  # En supposant que tous les joueurs n'ont pas commencé avec 1200
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
