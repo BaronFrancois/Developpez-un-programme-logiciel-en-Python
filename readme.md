@@ -25,3 +25,5 @@ implpémentation :
  * les données d’enregistrement sont sauvegardées dans JSON
  * modèle MVC, en python
  * BDD
+
+ A faire : le fichier players.json reste vide

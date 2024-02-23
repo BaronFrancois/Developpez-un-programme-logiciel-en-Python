@@ -23,7 +23,7 @@ class ChessTournament:
         self.start_date = start_date
         self.end_date = end_date
         self.number_of_rounds = number_of_rounds
-        self.rounds: List['TournamentRound'] = []
+        self.rounds: List['Round'] = []
         self.players: List[Player] = []
 
     def add_player(self, player: Player):
@@ -36,17 +36,17 @@ class ChessTournament:
             raise PairingError("Odd number of players, cannot generate pairs.")
         # Logic to generate pairs following specific rules
 
-class TournamentRound:
+class Round:
     def __init__(self, name: str):
         self.name = name
-        self.matches: List['ChessMatch'] = []
+        self.matches: List['Match'] = []
 
-    def add_match(self, match: 'ChessMatch'):
+    def add_match(self, match: 'Match'):
         if any(existing_match for existing_match in self.matches if match.player1 in (existing_match.player1, existing_match.player2) or match.player2 in (existing_match.player1, existing_match.player2)):
             raise MatchError("Players have already been paired.")
         self.matches.append(match)
 
-class ChessMatch:
+class Match:
     def __init__(self, player1: Player, player2: Player):
         self.player1 = player1
         self.player2 = player2
